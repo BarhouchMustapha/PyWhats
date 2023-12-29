@@ -42,6 +42,14 @@ def main():
                 recipient = input("Entrez le nom d'utilisateur à qui envoyer le message : ")
                 message = input("Entrez le message : ")
                 command = [choice, recipient, message]
+            elif choice == "3":
+                new_name = input("Entrez le nouveau nom d'utilisateur : ")
+                command = [choice, "1", new_name]  # Commande pour changer de nom
+                client.send(json.dumps(command).encode())
+
+            elif choice == "4":
+                # Pour l'instant, affiche un message car la gestion des contacts n'est pas implémentée
+                print("Gestion des contacts non supportée pour le moment.")
             else:
                 command = [choice]
 

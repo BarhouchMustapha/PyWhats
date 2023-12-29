@@ -36,7 +36,21 @@ def pywhats(client_socket, username):
                     client_socket.send("Utilisateur non trouvé.".encode())
             elif command[0] == "3":
                 # Gérer le profil (Supposons qu'on veut juste signaler un changement, pas le stocker)
-                client_socket.send("Changement de profil non supporté pour le moment.".encode())
+                #client_socket.send("Changement de profil non supporté pour le moment.".encode())
+                if command[1] == "1":
+                    # Changer le nom
+                    new_name = command[2]
+                    with lock:
+                        # Assurez-vous que le nouveau nom n'est pas déjà pris
+                        if new_name not in online_users:
+                            del online_users[username]  # Supprimer l'ancien nom
+                            online_users[new_name] = client_socket  # Ajouter avec le nouveau nom
+                            username = new_name  # Mettre à jour le nom d'utilisateur dans la session courante
+                            client_socket.send("Nom changé avec succès.".encode())
+                        else:
+                            client_socket.send("Le nom est déjà pris.".encode())
+
+            # Ajout d'une fonctionnalité pour la gestion des contacts
             elif command[0] == "4":
                 # Gérer les contacts (Supposons qu'on veut juste signaler un changement, pas le stocker)
                 client_socket.send("Gestion des contacts non supportée pour le moment.".encode())
