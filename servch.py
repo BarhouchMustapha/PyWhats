@@ -53,6 +53,7 @@ def main_menu():
     print("0. Quitter")
 
 def main():
+    global username
     if len(sys.argv) < 3:
         print("USAGE: python client.py <IP> <Port>")
         return
@@ -84,11 +85,8 @@ def main():
                         recipient = ""
                         break
             elif choice == "3":
-                while True:
-                    change_username(client)
-                    continue_option = input("Voulez-vous continuer à gérer votre profil? (o/n) : ").lower()
-                    if continue_option != "o":
-                        break
+                change_username(client)
+    
             elif choice == "4":
                 # Gestion des contacts non supportée pour le moment.
                 print("Gestion des contacts non supportée pour le moment.")
