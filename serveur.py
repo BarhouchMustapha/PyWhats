@@ -57,12 +57,20 @@ def pywhats(client_socket, username):
             elif command[0] == "sendfile": #################
                 file_name = command[1]
                 recipient = command[2]
-                file_size = int(client_socket.recv(1024).decode().strip())
+                client_socket.send("Ready to receive file".encode())
+                #file_size = int(client_socket.recv(1024).decode().strip())
                 file_data = b''
-                while len(file_data) < file_size:
-                    file_data += client_socket.recv(1024)
+                while True:
+                    chunk = client_socket.recv(1024)
+                    if not chunk:
+                        break  # Sortir de la boucle si aucun donnée n'est reçue
+                    file_data += chunk
                 if recipient in online_users:
                     online_users[recipient].send(f"file {file_name} {len(file_data)}".encode() + file_data)
+#                while len(file_data) < file_size:
+#                    file_data += client_socket.recv(1024)
+#                if recipient in online_users:
+#                    online_users[recipient].send(f"file {file_name} {len(file_data)}".encode() + file_data)
 
             else:
                 client_socket.send("Commande non reconnue.".encode())
