@@ -33,6 +33,7 @@ def send_file(client_socket, file_path, recipient):
         client_socket.send(file_data)
 
 def send_message(client_socket, recipient):
+    global username
     message = input(f"{username}: ")     
     command = ["2", recipient, message]
     client_socket.send(json.dumps(command).encode())
