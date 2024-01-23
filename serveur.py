@@ -28,7 +28,7 @@ def pywhats(client_socket, username):
                     selected_socket = online_users.get(selected_user)
                 if selected_socket:
                     try:
-                        selected_socket.send(f"{username} says: {message}".encode())
+                        selected_socket.send(f"{username}: {message}".encode())
                         client_socket.send("Message envoyé avec succès.".encode())
                     except:
                         client_socket.send("Échec de l'envoi du message.".encode())
