@@ -22,21 +22,21 @@ def receive_messages(client_socket):
                     file_data += chunk
 
                 # Créer un répertoire 'fichiers' s'il n'existe pas
-                if not os.path.exists('fichiers'):
-                    os.makedirs('fichiers')
+                if not os.path.exists('fichiers_de_'+f"{username}"):
+                    os.makedirs('fichiers_de_'+f"{username}")
 
                 # Créer un chemin unique en ajoutant un suffixe numérique si le fichier existe déjà
                 base, extension = os.path.splitext(file_name)
                 index = 1
-                file_path = os.path.join('./fichiers', f"{base}_{index}{extension}")
+                file_path = os.path.join('./fichiers_de_'+f"{username}", f"{base}_{index}{extension}")
                 while os.path.exists(file_path):
                     index += 1
-                    file_path = os.path.join('fichiers', f"{base}_{index}{extension}")
+                    file_path = os.path.join('./fichiers_de_'+f"{username}", f"{base}_{index}{extension}")
 
                 with open(file_path, 'wb') as file:
                     file.write(file_data)
 
-                print(f"Fichier {file_name} reçu et enregistré dans le répertoire 'fichiers' avec le nom '{os.path.basename(file_path)}'.")
+                print(f"Fichier {file_name} reçu et enregistré dans le répertoire fichiers_de_+{username} avec le nom '{os.path.basename(file_path)}'.")
             else:
                 print(message)
         except Exception as e:
