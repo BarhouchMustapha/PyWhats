@@ -54,23 +54,32 @@ def pywhats(client_socket, username):
             elif command[0] == "4":
                 # Gérer les contacts (Supposons qu'on veut juste signaler un changement, pas le stocker)
                 client_socket.send("Gestion des contacts non supportée pour le moment.".encode())
-            elif command[0] == "sendfile": #################
+# ... (autres parties de votre code)
+
+            elif command[0] == "sendfile":
                 file_name = command[1]
                 recipient = command[2]
-                client_socket.send("Ready to receive file".encode())
-                #file_size = int(client_socket.recv(1024).decode().strip())
+
+    # Réception de la taille du fichier
+                file_size_bytes = client_socket.recv(8)
+                file_size = int.from_bytes(file_size_bytes, byteorder='big')
+
+    # Réception du fichier par morceaux
                 file_data = b''
-                while True:
+                while len(file_data) < file_size:
                     chunk = client_socket.recv(1024)
                     if not chunk:
-                        break  # Sortir de la boucle si aucun donnée n'est reçue
+                        break
                     file_data += chunk
+
+                 # Vérifier si le destinataire est en ligne
                 if recipient in online_users:
-                    online_users[recipient].send(f"file {file_name} {len(file_data)}".encode() + file_data)
-#                while len(file_data) < file_size:
-#                    file_data += client_socket.recv(1024)
-#                if recipient in online_users:
-#                    online_users[recipient].send(f"file {file_name} {len(file_data)}".encode() + file_data)
+                    # Envoyer le fichier au destinataire
+                    online_users[recipient].send(f"file,{file_name},{len(file_data)}".encode())
+                    online_users[recipient].sendall(file_data)
+                    
+                    # Afficher un message côté serveur une fois le fichier reçu
+                    print(f"File '{file_name}' received from {recipient}")
 
             else:
                 client_socket.send("Commande non reconnue.".encode())

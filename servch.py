@@ -2,6 +2,7 @@ import socket
 import threading
 import sys
 import json
+import os
 
 
 username = ""
@@ -9,28 +10,63 @@ def receive_messages(client_socket):
     while True:
         try:
             message = client_socket.recv(1024).decode()
-            if message.startswith('file '):
-                _, file_name, file_size = message.split()
+            if message.startswith('file,'):
+                _, file_name, file_size = message.split(",")
                 file_size = int(file_size)
+                
                 file_data = b''
                 while len(file_data) < file_size:
-                    file_data += client_socket.recv(1024)
-                with open(file_name, 'wb') as file:
+                    chunk = client_socket.recv(1024)
+                    if not chunk:
+                        break
+                    file_data += chunk
+
+                # Créer un répertoire 'fichiers' s'il n'existe pas
+                if not os.path.exists('fichiers'):
+                    os.makedirs('fichiers')
+
+                # Créer un chemin unique en ajoutant un suffixe numérique si le fichier existe déjà
+                base, extension = os.path.splitext(file_name)
+                index = 1
+                file_path = os.path.join('./fichiers', f"{base}_{index}{extension}")
+                while os.path.exists(file_path):
+                    index += 1
+                    file_path = os.path.join('fichiers', f"{base}_{index}{extension}")
+
+                with open(file_path, 'wb') as file:
                     file.write(file_data)
-                print(f"Fichier {file_name} reçu.")
+
+                print(f"Fichier {file_name} reçu et enregistré dans le répertoire 'fichiers' avec le nom '{os.path.basename(file_path)}'.")
             else:
                 print(message)
         except Exception as e:
             print(f"Erreur de réception des messages : {e}")
             break
 
+
+
+
+
+
 def send_file(client_socket, file_path, recipient):
     file_name = file_path.split('/')[-1]
-    client_socket.send(json.dumps(["sendfile", file_name, recipient]).encode())
+    
+    # Envoi du nom du fichier et du destinataire
+    data_to_send = json.dumps(["sendfile", file_name, recipient]).encode()
+    client_socket.send(data_to_send)
+    
+    # Envoi de la taille du fichier
+    file_size = os.path.getsize(file_path)
+    client_socket.send(file_size.to_bytes(8, byteorder='big'))  # Utilisation de 8 octets pour la taille (ajustez si nécessaire)
+
+    # Envoi du contenu du fichier
     with open(file_path, 'rb') as file:
-        file_data = file.read()
-        client_socket.send(str(len(file_data)).encode())
-        client_socket.send(file_data)
+        while True:
+            file_data = file.read(1024)  # Lecture par petits morceaux (1024 octets à la fois)
+            if not file_data:
+                break
+            client_socket.sendall(file_data)
+
 
 def send_message(client_socket, recipient):
     global username
