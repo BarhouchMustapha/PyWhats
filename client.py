@@ -42,7 +42,7 @@ def receive_messages(client_socket):
         except Exception as e:
             print(f"Erreur de réception des messages : {e}")
             break
-
+ 
 
 
 
@@ -57,7 +57,7 @@ def send_file(client_socket, file_path, recipient):
     
     # Envoi de la taille du fichier
     file_size = os.path.getsize(file_path)
-    client_socket.send(file_size.to_bytes(8, byteorder='big'))  # Utilisation de 8 octets pour la taille (ajustez si nécessaire)
+    client_socket.send(file_size.to_bytes(8, byteorder='big'))  # Utilisation de 8 octets pour la taille 
 
     # Envoi du contenu du fichier
     with open(file_path, 'rb') as file:

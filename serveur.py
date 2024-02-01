@@ -54,7 +54,7 @@ def pywhats(client_socket, username):
             elif command[0] == "4":
                 # Gérer les contacts (Supposons qu'on veut juste signaler un changement, pas le stocker)
                 client_socket.send("Gestion des contacts non supportée pour le moment.".encode())
-# ... (autres parties de votre code)
+
 
             elif command[0] == "sendfile":
                 file_name = command[1]
