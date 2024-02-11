@@ -21,7 +21,7 @@ def receive_messages(client_socket):
                         break
                     file_data += chunk
 
-                # Créer un répertoire 'fichiers' s'il n'existe pas
+                # Créer un répertoire 'fichiers_de_username' s'il n'existe pas
                 if not os.path.exists('fichiers_de_'+f"{username}"):
                     os.makedirs('fichiers_de_'+f"{username}")
 
