@@ -1,2 +1,2 @@
 # PyWhats
- Projet interop Master
+ Messegrie instantanée programmée en python.
